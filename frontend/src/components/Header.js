@@ -78,9 +78,6 @@ function Header() {
 
   // Handle detection page navigation or redirect
   const isActivePath = (path) => {
-    if (path === "/detection") {
-      return location.pathname === "/" || location.pathname === "/detection";
-    }
     return location.pathname === path;
   };
 
@@ -93,7 +90,7 @@ function Header() {
     <header className="header">
       <div className="header-content">
         {/* Logo + Title */}
-        <div className="logo-container" onClick={() => navigate("/detection")} style={{ cursor: "pointer" }}>
+        <div className="logo-container" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           <div className="logo">🚗</div>
           <div className="title-container">
             <h1>NapGuard</h1>
@@ -104,7 +101,20 @@ function Header() {
         {/* Navigation */}
         <nav className={`nav-items ${menuOpen ? "nav-open" : ""}`}>
           <ul>
-                {/* Dashboard Tab (Points to Detection) */}
+                {/* Home Link */}
+                <li>
+                  <Link
+                    to="/"
+                    className={`nav-item ${
+                      isActivePath("/") ? "active" : ""
+                    }`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <FaTachometerAlt className="nav-icon" />
+                    <span className="nav-text">Home</span>
+                  </Link>
+                </li>
+                {/* Live Detection Link */}
                 <li>
                   <Link
                     to="/detection"
@@ -114,7 +124,7 @@ function Header() {
                     onClick={() => setMenuOpen(false)}
                   >
                     <FaVideo className="nav-icon" />
-                    <span className="nav-text">Dashboard</span>
+                    <span className="nav-text">Detection</span>
                   </Link>
                 </li>
                 <li>

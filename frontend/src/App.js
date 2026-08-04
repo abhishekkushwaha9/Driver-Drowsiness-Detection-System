@@ -12,6 +12,7 @@ import History from "./pages/History";
 import Settings from "./pages/Settings";
 import Statistics from "./pages/Statistics";
 import LastAlert from "./pages/LastAlert";
+import Landing from "./pages/Landing";
 
 function App() {
   const [drowsy, setDrowsy] = useState(false);
@@ -22,7 +23,7 @@ function App() {
       <Header />
       <main className="main">
         <Routes>
-          <Route path="/" element={<Navigate to="/detection" replace />} />
+          <Route path="/" element={<Landing />} />
           <Route
             path="/detection"
             element={
