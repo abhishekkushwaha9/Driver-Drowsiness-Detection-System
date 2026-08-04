@@ -17,8 +17,12 @@ function App() {
   const [drowsy, setDrowsy] = useState(false);
   const [alertMsg, setAlertMsg] = useState("System Ready");
 
+  const basename = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? '/'
+    : '/driver-drowsiness-detection';
+
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <Router basename={basename} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Header />
       <main className="main">
         <Routes>

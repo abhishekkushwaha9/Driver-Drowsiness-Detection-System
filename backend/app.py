@@ -6,6 +6,7 @@ import base64
 import numpy as np
 from utils.detection import detect_drowsiness
 import eventlet
+import os
 
 # -----------------------------
 # Flask App Setup
@@ -68,4 +69,5 @@ def status():
 # Main
 # -----------------------------
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port, debug=True)
