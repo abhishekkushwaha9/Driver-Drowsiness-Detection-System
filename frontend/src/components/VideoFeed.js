@@ -35,8 +35,10 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
   useEffect(() => {
     const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? "http://127.0.0.1:5000"
-      : "https://driver-drowsiness-api.up.railway.app";
-    socketRef.current = io(backendUrl);
+      : "https://driver-drowsiness-detection-system-production.up.railway.app";
+    socketRef.current = io(backendUrl, {
+      transports: ["websocket", "polling"],
+    });
 
     socketRef.current.on("connect", () => {
       console.log("Connected to backend socket");
