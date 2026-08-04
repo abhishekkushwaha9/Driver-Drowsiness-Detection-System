@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Driver-Drowsiness-Detection-System/static/css/main.ff08fc1e.css",
-    "main.js": "/Driver-Drowsiness-Detection-System/static/js/main.cbb9edad.js",
+    "main.css": "/Driver-Drowsiness-Detection-System/static/css/main.60de3dc0.css",
+    "main.js": "/Driver-Drowsiness-Detection-System/static/js/main.579d379d.js",
     "static/js/453.670e15c7.chunk.js": "/Driver-Drowsiness-Detection-System/static/js/453.670e15c7.chunk.js",
     "index.html": "/Driver-Drowsiness-Detection-System/index.html",
-    "main.ff08fc1e.css.map": "/Driver-Drowsiness-Detection-System/static/css/main.ff08fc1e.css.map",
-    "main.cbb9edad.js.map": "/Driver-Drowsiness-Detection-System/static/js/main.cbb9edad.js.map",
+    "main.60de3dc0.css.map": "/Driver-Drowsiness-Detection-System/static/css/main.60de3dc0.css.map",
+    "main.579d379d.js.map": "/Driver-Drowsiness-Detection-System/static/js/main.579d379d.js.map",
     "453.670e15c7.chunk.js.map": "/Driver-Drowsiness-Detection-System/static/js/453.670e15c7.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ff08fc1e.css",
-    "static/js/main.cbb9edad.js"
+    "static/css/main.60de3dc0.css",
+    "static/js/main.579d379d.js"
   ]
 }
