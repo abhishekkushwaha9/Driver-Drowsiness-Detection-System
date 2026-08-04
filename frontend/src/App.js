@@ -19,7 +19,7 @@ function App() {
 
   const basename = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? '/'
-    : '/driver-drowsiness-detection';
+    : '/Driver-Drowsiness-Detection-System';
 
   return (
     <Router basename={basename} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
