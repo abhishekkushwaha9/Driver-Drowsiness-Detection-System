@@ -144,7 +144,7 @@ const AuthPage = () => {
       }
     } catch (error) {
       console.error("Authentication submission error:", error);
-      setError(getErrorMessage(error.code));
+      setError(getErrorMessage(error.code) || error.message || "An unknown error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -165,7 +165,7 @@ const AuthPage = () => {
       setSuccessMessage("Password reset email sent! Check your inbox.");
     } catch (error) {
       console.error("Password reset error:", error);
-      setError(getErrorMessage(error.code));
+      setError(getErrorMessage(error.code) || error.message || "An unknown error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -208,6 +208,7 @@ const AuthPage = () => {
       "auth/user-disabled": "This account has been disabled.",
       "auth/user-not-found": "No account found with this email address.",
       "auth/wrong-password": "Incorrect password. Please try again.",
+      "auth/invalid-credential": "Email or password is incorrect. Please try again.",
       "auth/email-already-in-use": "This email is already registered. Please try logging in.",
       "auth/weak-password": "Password must be at least 6 characters.",
       "auth/too-many-requests": "Too many failed attempts. Please try again later.",
@@ -215,7 +216,7 @@ const AuthPage = () => {
       "auth/operation-not-allowed": "This operation is not allowed. Please contact support.",
       "auth/network-request-failed": "Network error. Please check your internet connection."
     };
-    return errorMessages[errorCode] || "An error occurred. Please try again.";
+    return errorMessages[errorCode] || `An error occurred. Please try again. (${errorCode})`;
   };
 
   return (

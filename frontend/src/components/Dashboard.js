@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 import { db, auth } from "../firebase/config";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { Bar } from 'react-chartjs-2';
 import {
@@ -39,22 +40,29 @@ function Dashboard() {
     }]
   });
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!auth.currentUser) {
+    let unsubscribeSnapshot;
+
+    const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (!user) {
         setLoading(false);
         return;
       }
 
-      try {
-        const q = query(
-          collection(db, "detections"),
-          where("userId", "==", auth.currentUser.uid),
-          orderBy("timestamp", "desc")
-        );
-        const querySnapshot = await getDocs(q);
-        const detections = querySnapshot.docs.map(doc => doc.data());
+      const q = query(
+        collection(db, "detections"),
+        where("userId", "==", user.uid)
+      );
+
+      unsubscribeSnapshot = onSnapshot(q, (querySnapshot) => {
+        const detections = querySnapshot.docs.map(doc => doc.data()).sort((a, b) => {
+          const timeA = a.timestamp?.toMillis() || 0;
+          const timeB = b.timestamp?.toMillis() || 0;
+          return timeB - timeA;
+        });
 
         const total = detections.length;
         const todayCount = detections.filter(d => {
@@ -63,8 +71,8 @@ function Dashboard() {
           return dDate && dDate.toDateString() === today.toDateString();
         }).length;
 
-        const lastTime = detections.length > 0
-          ? detections[0].timestamp?.toDate().toLocaleString()
+        const lastTime = detections.length > 0 && detections[0].timestamp
+          ? detections[0].timestamp.toDate().toLocaleString()
           : "Never";
 
         setStats(prev => ({ ...prev, total, today: todayCount, lastTime }));
@@ -84,14 +92,17 @@ function Dashboard() {
           datasets: [{ ...prev.datasets[0], data: dayCounts }]
         }));
 
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
         setLoading(false);
-      }
-    };
+      }, (error) => {
+        console.error("Error fetching live dashboard data:", error);
+        setLoading(false);
+      });
+    });
 
-    fetchData();
+    return () => {
+      authUnsubscribe();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
 
   return (
@@ -101,9 +112,9 @@ function Dashboard() {
         <p>Your driving safety overview</p>
       </div>
 
-      {!auth.currentUser ? (
+      {!currentUser ? (
         <div className="no-history" style={{ textAlign: 'center', padding: '5rem', background: 'rgba(30, 41, 59, 0.4)', borderRadius: '20px', marginTop: '2rem' }}>
-          <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Login</Link> to view your live analytics dashboard.</p>
+          <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Login or Sign Up</Link> to view your live analytics dashboard.</p>
         </div>
       ) : loading ? (
         <div className="no-history" style={{ textAlign: 'center', padding: '5rem' }}>Loading your data...</div>

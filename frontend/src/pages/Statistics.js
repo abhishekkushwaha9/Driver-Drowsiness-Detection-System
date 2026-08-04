@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { db, auth } from "../firebase/config";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -43,23 +44,31 @@ function Statistics() {
     }]
   });
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      if (!auth.currentUser) return;
+    const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-      try {
-        const q = query(
-          collection(db, "detections"),
-          where("userId", "==", auth.currentUser.uid),
-          orderBy("timestamp", "desc")
-        );
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map(doc => doc.data());
+      const q = query(
+        collection(db, "detections"),
+        where("userId", "==", user.uid)
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const data = querySnapshot.docs.map(doc => doc.data()).sort((a, b) => {
+          const timeA = a.timestamp?.toMillis() || 0;
+          const timeB = b.timestamp?.toMillis() || 0;
+          return timeB - timeA;
+        });
 
         const totalAlerts = data.length;
         const today = new Date().toDateString();
-        const todayAlerts = data.filter(d => d.timestamp?.toDate().toDateString() === today).length;
+        const todayAlerts = data.filter(d => d.timestamp && d.timestamp.toDate().toDateString() === today).length;
         
         const reasons = data.map(d => d.reasons || []).flat();
         const reasonCounts = reasons.reduce((acc, r) => {
@@ -67,9 +76,9 @@ function Statistics() {
           return acc;
         }, {});
         
-        const topReason = Object.keys(reasonCounts).reduce((a, b) => 
-          reasonCounts[a] > reasonCounts[b] ? a : b, "None"
-        );
+        const topReason = Object.keys(reasonCounts).length > 0 
+          ? Object.keys(reasonCounts).reduce((a, b) => reasonCounts[a] > reasonCounts[b] ? a : b)
+          : "None";
 
         // Chart data aggregation
         const dayCounts = [0, 0, 0, 0, 0, 0, 0];
@@ -95,14 +104,16 @@ function Statistics() {
           datasets: [{ ...prev.datasets[0], data: dayCounts }]
         }));
 
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-      } finally {
         setLoading(false);
-      }
-    };
+      }, (error) => {
+        console.error("Error fetching live stats:", error);
+        setLoading(false);
+      });
 
-    fetchStats();
+      return () => unsubscribe();
+    });
+
+    return () => authUnsubscribe();
   }, []);
 
   return (
@@ -112,9 +123,9 @@ function Statistics() {
         <p>Comprehensive breakdown of your monitoring sessions</p>
       </div>
       
-      {!auth.currentUser ? (
+      {!currentUser ? (
         <div className="no-history">
-          <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Login</Link> to view your safety statistics.</p>
+          <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Login or Sign Up</Link> to view your safety statistics.</p>
         </div>
       ) : loading ? (
         <div className="no-history">Analyzing your data...</div>
@@ -159,12 +170,12 @@ function Statistics() {
                     scales: { 
                       y: { 
                         beginAtZero: true, 
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#94a3b8', stepSize: 1 }
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                        ticks: { color: '#6b7280', stepSize: 1 }
                       },
                       x: {
                         grid: { display: false },
-                        ticks: { color: '#94a3b8' }
+                        ticks: { color: '#6b7280' }
                       }
                     }
                   }} 

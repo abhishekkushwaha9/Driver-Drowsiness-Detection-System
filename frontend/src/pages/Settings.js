@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Settings.css";
+import { alarmSynth } from "../utils/audioTools";
 
 function Settings() {
+  const [alarmSound, setAlarmSound] = useState(() => {
+    return localStorage.getItem("drowsiness_alarm_sound") || "Buzzer";
+  });
+
+  const handleSoundChange = (e) => {
+    const newSound = e.target.value;
+    setAlarmSound(newSound);
+    localStorage.setItem("drowsiness_alarm_sound", newSound);
+    
+    // Preview the sound
+    alarmSynth.playAlert(newSound);
+  };
+
   return (
     <div className="settings-container">
       <h2>App Settings</h2>
@@ -13,10 +27,10 @@ function Settings() {
         </div>
         <div className="setting-item">
           <span>Alarm Sound</span>
-          <select>
-            <option>Default Buzzer</option>
-            <option>Gentle Alert</option>
-            <option>Loud Warning</option>
+          <select value={alarmSound} onChange={handleSoundChange}>
+            <option value="Buzzer">Buzzer</option>
+            <option value="Gentle Alert">Gentle Alert</option>
+            <option value="Loud Warning">Loud Warning</option>
           </select>
         </div>
       </div>

@@ -1,40 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { db, auth } from "../firebase/config";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import "./History.css";
 
 function History() {
   const [detections, setDetections] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      if (!auth.currentUser) {
+    const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (!user) {
         setLoading(false);
         return;
       }
 
-      try {
-        const q = query(
-          collection(db, "detections"),
-          where("userId", "==", auth.currentUser.uid),
-          orderBy("timestamp", "desc")
-        );
-        const querySnapshot = await getDocs(q);
+      const q = query(
+        collection(db, "detections"),
+        where("userId", "==", user.uid)
+      );
+      
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const data = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        }));
+        })).sort((a, b) => {
+          const timeA = a.timestamp?.toMillis() || 0;
+          const timeB = b.timestamp?.toMillis() || 0;
+          return timeB - timeA;
+        });
         setDetections(data);
-      } catch (error) {
-        console.error("Error fetching history:", error);
-      } finally {
         setLoading(false);
-      }
-    };
+      }, (error) => {
+        console.error("Error fetching live history:", error);
+        setLoading(false);
+      });
 
-    fetchHistory();
+      // We attach the data unsubscribe to be cleaned up
+      return () => unsubscribe();
+    });
+
+    return () => authUnsubscribe();
   }, []);
 
   return (
@@ -44,9 +53,9 @@ function History() {
         <p>Review your previous monitoring sessions and alerts</p>
       </div>
 
-      {!auth.currentUser ? (
+      {!currentUser ? (
         <div className="no-history">
-          <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Login</Link> to view your history records.</p>
+          <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Login or Sign Up</Link> to view your history records.</p>
         </div>
       ) : loading ? (
         <div className="no-history">Loading history records...</div>

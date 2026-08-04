@@ -11,6 +11,7 @@ import  Login  from "./pages/Login";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
 import Statistics from "./pages/Statistics";
+import LastAlert from "./pages/LastAlert";
 
 function App() {
   const [drowsy, setDrowsy] = useState(false);
@@ -36,6 +37,7 @@ function App() {
           <Route path="/history" element={<History />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/last-alert" element={<LastAlert />} />
         </Routes>
       </main>
     </Router>

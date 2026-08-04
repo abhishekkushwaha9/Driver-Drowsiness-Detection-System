@@ -1,10 +1,10 @@
 flask
 flask-cors
 opencv-python
-dlib
+mediapipe
 numpy
 scipy
 flask-socketio
 eventlet
 python-socketio
-engineio
+python-engineio

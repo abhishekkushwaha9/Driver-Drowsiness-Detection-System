@@ -69,10 +69,10 @@ const Settings = () => {
           <h3>Detection Settings</h3>
           
           <div className="setting-option">
-            <label>
-              Drowsiness Sensitivity
+            <div className="setting-header-row">
+              <span className="setting-label">Drowsiness Sensitivity</span>
               <span className="value-display">{settings.drowsinessSensitivity}%</span>
-            </label>
+            </div>
             <input
               type="range"
               name="drowsinessSensitivity"
@@ -85,10 +85,10 @@ const Settings = () => {
           </div>
 
           <div className="setting-option">
-            <label>
-              Detection Frequency
+            <div className="setting-header-row">
+              <span className="setting-label">Detection Frequency</span>
               <span className="value-display">{settings.detectionFrequency} seconds</span>
-            </label>
+            </div>
             <input
               type="range"
               name="detectionFrequency"
@@ -102,27 +102,33 @@ const Settings = () => {
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="sleepDetection"
-                checked={settings.sleepDetection}
-                onChange={handleChange}
-              />
-              Enable Sleep Detection
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable Sleep Detection</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="sleepDetection"
+                  checked={settings.sleepDetection}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="distractionDetection"
-                checked={settings.distractionDetection}
-                onChange={handleChange}
-              />
-              Enable Distraction Detection
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable Distraction Detection</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="distractionDetection"
+                  checked={settings.distractionDetection}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -131,10 +137,10 @@ const Settings = () => {
           <h3>Alert Settings</h3>
           
           <div className="setting-option">
-            <label>
-              Alarm Volume
+            <div className="setting-header-row">
+              <span className="setting-label">Alarm Volume</span>
               <span className="value-display">{settings.alarmVolume}%</span>
-            </label>
+            </div>
             <input
               type="range"
               name="alarmVolume"
@@ -146,10 +152,10 @@ const Settings = () => {
           </div>
 
           <div className="setting-option">
-            <label>
-              Alert Duration
+            <div className="setting-header-row">
+              <span className="setting-label">Alert Duration</span>
               <span className="value-display">{settings.alertDuration} seconds</span>
-            </label>
+            </div>
             <input
               type="range"
               name="alertDuration"
@@ -163,27 +169,33 @@ const Settings = () => {
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="enableVoiceAlerts"
-                checked={settings.enableVoiceAlerts}
-                onChange={handleChange}
-              />
-              Enable Voice Alerts
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable Voice Alerts</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="enableVoiceAlerts"
+                  checked={settings.enableVoiceAlerts}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="enableVibration"
-                checked={settings.enableVibration}
-                onChange={handleChange}
-              />
-              Enable Vibration Alerts
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable Vibration Alerts</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="enableVibration"
+                  checked={settings.enableVibration}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -192,28 +204,29 @@ const Settings = () => {
           <h3>Notification Settings</h3>
           
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="emailNotifications"
-                checked={settings.emailNotifications}
-                onChange={handleChange}
-              />
-              Email Notifications
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Email Notifications</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="emailNotifications"
+                  checked={settings.emailNotifications}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
 
           <div className="setting-option">
-            <label>
-              Emergency Contact
-              <input
-                type="text"
-                name="emergencyContact"
-                placeholder="Enter phone number"
-                value={settings.emergencyContact}
-                onChange={handleChange}
-              />
-            </label>
+            <span className="setting-label">Emergency Contact</span>
+            <input
+              type="text"
+              name="emergencyContact"
+              placeholder="Enter phone number"
+              value={settings.emergencyContact}
+              onChange={handleChange}
+            />
             <div className="hint">Contact to notify in case of severe drowsiness</div>
           </div>
         </div>
@@ -223,65 +236,80 @@ const Settings = () => {
           <h3>System Settings</h3>
           
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="darkMode"
-                checked={settings.darkMode}
-                onChange={handleChange}
-              />
-              Enable Dark Mode
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable Dark Mode</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="darkMode"
+                  checked={settings.darkMode}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="autoSaveReports"
-                checked={settings.autoSaveReports}
-                onChange={handleChange}
-              />
-              Auto-save Detection Reports
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Auto-save Detection Reports</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="autoSaveReports"
+                  checked={settings.autoSaveReports}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="enableGPSLogging"
-                checked={settings.enableGPSLogging}
-                onChange={handleChange}
-              />
-              Enable GPS Logging
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable GPS Logging</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="enableGPSLogging"
+                  checked={settings.enableGPSLogging}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
             <div className="hint">Record location data during alerts</div>
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="enableCamera"
-                checked={settings.enableCamera}
-                onChange={handleChange}
-              />
-              Enable Camera
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Enable Camera</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="enableCamera"
+                  checked={settings.enableCamera}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
             <div className="hint">Allow system to access camera for detection</div>
           </div>
 
           <div className="setting-option">
-            <label>
-              <input
-                type="checkbox"
-                name="enableAutoStart"
-                checked={settings.enableAutoStart}
-                onChange={handleChange}
-              />
-              Auto-start on Device Boot
-            </label>
+            <div className="setting-header-row">
+              <span className="setting-label">Auto-start on Device Boot</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  name="enableAutoStart"
+                  checked={settings.enableAutoStart}
+                  onChange={handleChange}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "./VideoFeed.css";
 import io from "socket.io-client";
 import { auth, db } from "../firebase/config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, setDoc, increment } from "firebase/firestore";
+import { alarmSynth } from "../utils/audioTools";
 
 function VideoFeed({ setDrowsy, setAlertMsg }) {
   const [isDetectionActive, setIsDetectionActive] = useState(false);
@@ -14,10 +15,21 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const socketRef = useRef(null);
-  const alarmRef = useRef(null);
   const lastDrowsyTime = useRef(0);
-
+  const [user, setUser] = useState(null);
+  const userRef = useRef(null);
   const drowsyCounter = useRef(0);
+  const latestFrameRef = useRef(null);
+
+  // Track Auth State
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      setUser(u);
+      userRef.current = u; // Keep ref updated
+      console.log("Auth state changed, user:", u ? u.uid : "None");
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Initialize Socket.IO
   useEffect(() => {
@@ -28,6 +40,7 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
     });
 
     socketRef.current.on("response", (data) => {
+      const receiveTime = Date.now();
       if (data.error) {
         console.error("Backend error:", data.error);
         return;
@@ -35,19 +48,34 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
 
       setFaceDetected(data.face_detected);
       
+      // Calculate Latency and FPS
+      if (data.timestamp) {
+        const latency = receiveTime - data.timestamp;
+        setPerformanceMetrics(prev => {
+          const now = Date.now();
+          const fps = 1000 / (now - (socketRef.current.lastResponseTime || now - 200));
+          socketRef.current.lastResponseTime = now;
+          return { fps: Math.round(fps * 10) / 10, latency };
+        });
+      }
+      
       if (!data.face_detected) {
         setDetectionStatus("inactive");
         setAlertMsg("Waiting for Face...");
         drowsyCounter.current = 0;
         setDrowsy(false);
-      } else if (data.drowsy) {
+      } else if (data.drowsy || data.warning) {
         drowsyCounter.current += 1;
         // Require 3 consecutive frames (~600ms) to trigger alert
         if (drowsyCounter.current >= 3) {
-          setDetectionStatus("critical");
-          setAlertMsg(`🚨 DROWSY! [${data.reasons.join(", ")}]`);
-          setDrowsy(true);
-          handleDrowsyDetection(data);
+          const type = data.drowsy ? "critical" : "warning";
+          const icon = data.drowsy ? "🚨" : "⚠️";
+          const label = data.drowsy ? "DROWSY" : "WARNING";
+          
+          setDetectionStatus(type);
+          setAlertMsg(`${icon} ${label}! [${data.reasons.join(", ")}]`);
+          setDrowsy(data.drowsy); // Usually triggers the loud alarm
+          handleDetectionEvent(data, type, latestFrameRef.current);
         }
       } else {
         drowsyCounter.current = 0;
@@ -62,30 +90,68 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
     };
   }, [setDrowsy, setAlertMsg]);
 
-  // Handle Drowsy Detection (Alarm + Firestore)
-  const handleDrowsyDetection = async (data) => {
-    // Play sound
-    if (alarmRef.current) {
-      alarmRef.current.play().catch(e => console.error("Audio play error:", e));
+  // Handle Drowsy Detection (Alarm + Firestore + local frame save)
+  const handleDetectionEvent = async (data, type, frameImage) => {
+    // Play alarm sounds
+    if (type === "critical") {
+      const selectedSound = localStorage.getItem("drowsiness_alarm_sound") || "Buzzer";
+      alarmSynth.playAlert(selectedSound);
+    } else if (type === "warning") {
+      const selectedSound = localStorage.getItem("warning_alarm_sound") || "Gentle Alert";
+      alarmSynth.playAlert(selectedSound);
     }
 
-    // Save to Firestore every 10 seconds to avoid spamming
+    // Save to localStorage for the guest/recent display page
+    const alertData = {
+      timestamp: new Date().toISOString(),
+      status: type,
+      reasons: data.reasons,
+      ear: data.ear,
+      mar: data.mar,
+      pitch: data.pitch || 0,
+      yaw: data.yaw || 0,
+      image: frameImage
+    };
+    localStorage.setItem("napguard_last_alert", JSON.stringify(alertData));
+
+    // Save to Firestore every 3 seconds to avoid spamming
     const now = Date.now();
-    if (now - lastDrowsyTime.current > 10000 && auth.currentUser) {
+    const currentUser = userRef.current;
+    
+    if (currentUser && now - lastDrowsyTime.current > 3000) {
       lastDrowsyTime.current = now;
+      console.log(`%c Saving ${type.toUpperCase()} event for user: ${currentUser.uid}`, 'background: #222; color: #bada55');
+      
       try {
-        await addDoc(collection(db, "detections"), {
-          userId: auth.currentUser.uid,
+        const detectionData = {
+          userId: currentUser.uid,
           timestamp: serverTimestamp(),
-          status: "drowsy",
+          status: type,
           reasons: data.reasons,
           ear: data.ear,
-          mar: data.mar
-        });
-        console.log("Detection saved to Firestore");
+          mar: data.mar,
+          pitch: data.pitch || 0,
+          yaw: data.yaw || 0,
+          image: frameImage
+        };
+
+        await addDoc(collection(db, "detections"), detectionData);
+
+        // Also update the statistics collection for the user
+        const statsRef = doc(db, "statistics", currentUser.uid);
+        await setDoc(statsRef, {
+          userId: currentUser.uid,
+          totalAlerts: increment(1),
+          lastDetectionTime: serverTimestamp(),
+          lastReason: data.reasons.join(", ")
+        }, { merge: true });
+
+        console.log("✅ Detection successfully saved to Firestore");
       } catch (e) {
-        console.error("Error saving detection:", e);
+        console.error("❌ Firestore Save Error:", e);
       }
+    } else if (!currentUser) {
+      console.warn("⚠️ Detection occurred but NO USER is logged in. Please login to save data.");
     }
   };
 
@@ -127,7 +193,11 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
           const context = canvasRef.current.getContext("2d");
           context.drawImage(videoRef.current, 0, 0, 640, 480);
           const imageData = canvasRef.current.toDataURL("image/jpeg", 0.5);
-          socketRef.current.emit("image", imageData);
+          latestFrameRef.current = imageData;
+          socketRef.current.emit("image", {
+            image: imageData,
+            timestamp: Date.now()
+          });
         }
       }, 200); // 5 FPS
     }
@@ -137,7 +207,6 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
 
   return (
     <div className="video-monitor">
-      <audio ref={alarmRef} src="/alarm.mp3" preload="auto" />
       <div className="monitor-header">
         <h3>Live Driver Monitoring</h3>
         <div className="header-controls">
@@ -172,6 +241,7 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
                 {!isDetectionActive && "🔴 System Inactive"}
                 {isDetectionActive && !faceDetected && "🟠 Searching for Face..."}
                 {isDetectionActive && faceDetected && detectionStatus === "normal" && "✅ Driver Alert"}
+                {isDetectionActive && faceDetected && detectionStatus === "warning" && "⚠️ Distraction or Pre-Drowsiness!"}
                 {isDetectionActive && faceDetected && detectionStatus === "critical" && "🚨 Drowsiness Detected!"}
               </div>
             </div>
@@ -185,6 +255,12 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
             <span className="status-dot"></span>
             Detection: {isDetectionActive ? 'ACTIVE' : 'INACTIVE'}
           </div>
+          {isDetectionActive && (
+            <div className="metrics-display">
+              <span className="metric-item">FPS: <strong>{performanceMetrics.fps}</strong></span>
+              <span className="metric-item">Latency: <strong>{performanceMetrics.latency}ms</strong></span>
+            </div>
+          )}
         </div>
       </div>
     </div>

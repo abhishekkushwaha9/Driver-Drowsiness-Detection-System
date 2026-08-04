@@ -1,57 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Alerts.css";
+import { db, auth } from "../firebase/config";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Alerts = () => {
   const [filter, setFilter] = useState("all");
   const [muteAll, setMuteAll] = useState(false);
+  const [alertsData, setAlertsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const alertsData = [
-    {
-      id: 1,
-      type: "critical",
-      title: "Drowsiness Detected!",
-      message: "Driver showed signs of drowsiness for 15 seconds. Immediate attention required.",
-      time: "2 minutes ago",
-      read: false,
-      actionRequired: true
-    },
-    {
-      id: 2,
-      type: "warning",
-      title: "Distraction Alert",
-      message: "Driver was distracted for 10 seconds. Please stay focused on the road.",
-      time: "15 minutes ago",
-      read: true,
-      actionRequired: false
-    },
-    {
-      id: 3,
-      type: "info",
-      title: "System Update",
-      message: "New detection algorithms have been installed. System will restart at next stop.",
-      time: "1 hour ago",
-      read: true,
-      actionRequired: false
-    },
-    {
-      id: 4,
-      type: "success",
-      title: "Drive Completed Safely",
-      message: "The journey was completed with 98% alertness score. Well done!",
-      time: "3 hours ago",
-      read: true,
-      actionRequired: false
-    },
-    {
-      id: 5,
-      type: "critical",
-      title: "Emergency Protocol Activated",
-      message: "Vehicle safely pulled over after detecting severe drowsiness patterns.",
-      time: "Yesterday",
-      read: false,
-      actionRequired: true
-    }
-  ];
+  useEffect(() => {
+    let unsubscribeSnapshot;
+
+    const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setAlertsData([]);
+        setLoading(false);
+        return;
+      }
+
+      const q = query(
+        collection(db, "detections"),
+        where("userId", "==", user.uid)
+      );
+
+      unsubscribeSnapshot = onSnapshot(q, (querySnapshot) => {
+        const data = querySnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) => {
+            const timeA = a.timestamp?.toMillis() || 0;
+            const timeB = b.timestamp?.toMillis() || 0;
+            return timeB - timeA;
+          })
+          .map(docData => {
+            const date = docData.timestamp?.toDate() || new Date();
+            
+            const type = docData.status || "critical";
+            let title = "Drowsiness Detected!";
+            let baseMsg = "signs of drowsiness";
+            
+            // Format reasons to be more readable
+            const formattedReasons = (docData.reasons || [])
+              .map(r => r.replace(/_/g, ' '))
+              .join(', ') || "Unknown reason";
+
+            if (type === "warning") {
+              if (formattedReasons.includes("distracted")) {
+                title = "Driver Distraction!";
+                baseMsg = "distracted behavior";
+              } else {
+                title = "Driver Warning";
+                baseMsg = "warning signs";
+              }
+            }
+            
+            return {
+              id: docData.id,
+              type: type,
+              title: title,
+              message: `System detected ${baseMsg}: ${formattedReasons}.`,
+              time: date.toLocaleString(),
+              read: false,
+              actionRequired: type === "critical"
+            };
+          });
+        
+        setAlertsData(data);
+        setLoading(false);
+      }, (error) => {
+        console.error("Error fetching alerts:", error);
+        setLoading(false);
+      });
+    });
+
+    return () => {
+      authUnsubscribe();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
+  }, []);
 
   const filteredAlerts = filter === "all" 
     ? alertsData 
@@ -61,12 +88,11 @@ const Alerts = () => {
   const criticalCount = alertsData.filter(alert => alert.type === "critical" && !alert.read).length;
 
   const markAsRead = (id) => {
-    // In a real app, this would update the state or make an API call
+    // In a real app, update Firestore status
     console.log(`Marking alert ${id} as read`);
   };
 
   const clearAll = () => {
-    // In a real app, this would clear all alerts
     console.log("Clearing all alerts");
   };
 
@@ -128,7 +154,11 @@ const Alerts = () => {
       </div>
 
       <div className="alerts-list">
-        {filteredAlerts.length > 0 ? (
+        {loading ? (
+          <div className="no-alerts">
+            <p>Loading your alerts...</p>
+          </div>
+        ) : filteredAlerts.length > 0 ? (
           filteredAlerts.map(alert => (
             <div 
               key={alert.id} 
