@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Driver-Drowsiness-Detection-System/static/css/main.ff08fc1e.css",
-    "main.js": "/Driver-Drowsiness-Detection-System/static/js/main.596820a6.js",
+    "main.js": "/Driver-Drowsiness-Detection-System/static/js/main.cbb9edad.js",
     "static/js/453.670e15c7.chunk.js": "/Driver-Drowsiness-Detection-System/static/js/453.670e15c7.chunk.js",
     "index.html": "/Driver-Drowsiness-Detection-System/index.html",
     "main.ff08fc1e.css.map": "/Driver-Drowsiness-Detection-System/static/css/main.ff08fc1e.css.map",
-    "main.596820a6.js.map": "/Driver-Drowsiness-Detection-System/static/js/main.596820a6.js.map",
+    "main.cbb9edad.js.map": "/Driver-Drowsiness-Detection-System/static/js/main.cbb9edad.js.map",
     "453.670e15c7.chunk.js.map": "/Driver-Drowsiness-Detection-System/static/js/453.670e15c7.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ff08fc1e.css",
-    "static/js/main.596820a6.js"
+    "static/js/main.cbb9edad.js"
   ]
 }
