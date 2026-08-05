@@ -266,11 +266,71 @@
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+@media (max-width: 1024px) {
+  .stats-section {
+    padding: 2.5rem 2rem;
+  }
+  .landing-stats-grid {
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2.5rem;
   }
+  .hero-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
   .hero-section {
     padding: 3rem 0 4rem;
+  }
+  .stats-section {
+    padding: 2rem 1.5rem;
+    margin: 3rem 0;
+    gap: 2rem;
+  }
+  .landing-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .features-section {
+    padding: 2rem 0;
+  }
+  .section-title {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-container {
+    padding: 1.5rem 1rem;
+  }
+  .hero-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+  .btn-primary-glow, .btn-secondary-glass {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0.85rem 1.5rem;
+  }
+  .landing-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .tech-logos {
+    gap: 1.5rem;
+  }
+  .tech-logo {
+    font-size: 1rem;
+    padding: 0.4rem 1rem;
   }
 }

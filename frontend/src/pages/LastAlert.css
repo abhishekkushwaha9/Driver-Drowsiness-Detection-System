@@ -479,6 +479,81 @@
   }
 }
 
+@media (max-width: 480px) {
+  .last-alert-container {
+    padding: 1.5rem 1rem;
+  }
+  .glass {
+    padding: 1.5rem 1.25rem;
+  }
+  .last-alert-header h2 {
+    font-size: 1.6rem;
+  }
+  .last-alert-header p {
+    font-size: 0.95rem;
+  }
+  .status-banner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.8rem;
+    padding: 1.25rem;
+  }
+  .pose-details-row {
+    grid-template-columns: 1fr;
+  }
+  .recovery-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .metrics-gauges {
+    gap: 1.25rem;
+  }
+  .metric-gauge-item {
+    padding: 1rem;
+  }
+  .no-alert-card {
+    padding: 3rem 1.5rem;
+    margin: 2rem auto;
+  }
+  .no-alert-card h3 {
+    font-size: 1.5rem;
+  }
+  .no-alert-card p {
+    font-size: 1rem;
+  }
+  .no-alert-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .action-btn-green, .action-btn-demo {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .clear-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 380px) {
+  .last-alert-container {
+    padding: 1rem 0.75rem;
+  }
+  .glass {
+    padding: 1rem;
+  }
+  .metric-gauge-item {
+    padding: 0.75rem;
+  }
+  .recovery-action-card {
+    padding: 1rem;
+  }
+  .last-alert-header h2 {
+    font-size: 1.4rem;
+  }
+}
+
 /* Incident Image Display styling */
 .incident-image-container {
   width: 100%;

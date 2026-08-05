@@ -450,4 +450,38 @@
   .user-welcome {
     display: none;
   }
+
+  .user-display-name {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .header-content {
+    padding: 0.8rem 0.75rem;
+  }
+  .logo-container {
+    gap: 8px;
+    padding: 4px 6px;
+  }
+  .title-container p {
+    display: none;
+  }
+  .login-label, .user-info-bubble {
+    display: none !important;
+  }
+  .login-section, .user-profile-wrapper .user-section {
+    padding: 6px !important;
+    border-radius: 50% !important;
+    width: 36px;
+    height: 36px;
+    box-sizing: border-box;
+    justify-content: center;
+  }
+  .header-controls {
+    gap: 8px;
+  }
 }

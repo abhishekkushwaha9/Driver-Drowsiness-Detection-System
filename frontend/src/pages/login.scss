@@ -467,3 +467,43 @@ $transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   font-size: 0.85rem;
   font-weight: 500;
 }
+
+@media (max-width: 480px) {
+  .auth-form-section {
+    padding: 1.5rem 1rem;
+  }
+  .auth-header {
+    margin-bottom: 1.5rem;
+    .auth-title {
+      font-size: 1.8rem;
+    }
+    .auth-subtitle {
+      font-size: 0.95rem;
+    }
+  }
+  .auth-form {
+    .form-input {
+      padding: 0.85rem 1rem;
+      font-size: 0.95rem;
+    }
+    .auth-submit-btn {
+      padding: 1rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+  }
+  .auth-divider {
+    margin: 1.5rem 0;
+  }
+  .social-auth .social-btn {
+    padding: 0.85rem;
+    font-size: 0.95rem;
+  }
+  .auth-switch {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .auth-footer {
+    margin-top: 2rem;
+  }
+}

@@ -70,12 +70,10 @@
   flex-grow: 1; /* Pushes content appropriately */
 }
 
-/* Explicitly row-wise layout for statistics */
+/* Explicitly grid layout for statistics */
 .stats-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-bottom: 2.5rem;
   width: 100%;
@@ -120,9 +118,25 @@
   margin-top: 2rem;
 }
 
-/* Responsive row collapsing */
-@media (max-width: 768px) {
+/* Responsive layout breakpoints */
+@media (max-width: 1024px) {
   .stats-grid {
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-container {
+    padding: 1.5rem 1rem;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .chart-card {
+    padding: 1.25rem;
+  }
+  .chart-wrapper {
+    height: 280px;
   }
 }

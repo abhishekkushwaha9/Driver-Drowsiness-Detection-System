@@ -242,6 +242,10 @@ body {
 }
 
 @media (max-width: 768px) {
+  .video-monitor {
+    margin: 10px auto;
+    padding: 10px;
+  }
   .monitor-header {
     flex-direction: column;
     gap: 15px;
@@ -254,5 +258,30 @@ body {
   .detection-btn, .overlay-btn {
     flex: 1;
     justify-content: center;
+  }
+  .video-container {
+    height: auto;
+    aspect-ratio: 4/3;
+  }
+  .video-controls {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  .system-status {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .detection-status {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .metrics-display {
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 0;
   }
 }

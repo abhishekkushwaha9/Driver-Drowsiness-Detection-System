@@ -124,3 +124,56 @@
   border-radius: 8px;
   margin-top: 2rem;
 }
+
+@media (max-width: 768px) {
+  .history-container {
+    padding: 1.5rem 1rem;
+  }
+  .history-table-container {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  .history-table thead {
+    display: none;
+  }
+  .history-table, .history-table tbody, .history-table tr, .history-table td {
+    display: block;
+    width: 100%;
+  }
+  .history-table tr {
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  }
+  .history-table td {
+    text-align: right;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid #f3f4f6;
+    position: relative;
+    min-height: 2.25rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  .history-table td:last-child {
+    border-bottom: none;
+  }
+  .history-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1.25rem;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+  .reasons-list {
+    justify-content: flex-end;
+  }
+}

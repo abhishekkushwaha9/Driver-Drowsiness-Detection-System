@@ -16,7 +16,7 @@ const googleProvider = new GoogleAuthProvider();
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isLoginMode, setIsLoginMode] = useState(false);
   const [formData, setFormData] = useState({ 
     name: "", 
     email: "", 

@@ -76,14 +76,14 @@ function History() {
                 const date = item.timestamp?.toDate() || new Date();
                 return (
                   <tr key={item.id}>
-                    <td>{date.toLocaleDateString()}</td>
-                    <td>{date.toLocaleTimeString()}</td>
-                    <td>
+                    <td data-label="Date">{date.toLocaleDateString()}</td>
+                    <td data-label="Time">{date.toLocaleTimeString()}</td>
+                    <td data-label="Status">
                       <span className={`status-${item.status?.toLowerCase()}`}>
                         {item.status?.toUpperCase() || 'ALERT'}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Details">
                       <div className="reasons-list">
                         {item.reasons && item.reasons.length > 0 ? (
                           item.reasons.map((r, i) => (
@@ -94,7 +94,7 @@ function History() {
                         )}
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Metrics">
                       <span className="metrics-text">
                         EAR: {item.ear?.toFixed(2) || 'N/A'} | MAR: {item.mar?.toFixed(2) || 'N/A'}
                       </span>
