@@ -202,8 +202,40 @@ function VideoFeed({ setDrowsy, setAlertMsg, setCurrentEar, setCurrentMar }) {
     if (isDetectionActive && socketRef.current) {
       intervalId = setInterval(() => {
         if (videoRef.current && canvasRef.current) {
+          const videoWidth = videoRef.current.videoWidth;
+          const videoHeight = videoRef.current.videoHeight;
+          
+          let targetWidth = 640;
+          let targetHeight = 480;
+
+          if (videoWidth && videoHeight) {
+            const maxDim = 640;
+            if (videoWidth > videoHeight) {
+              if (videoWidth > maxDim) {
+                targetWidth = maxDim;
+                targetHeight = Math.round((videoHeight * maxDim) / videoWidth);
+              } else {
+                targetWidth = videoWidth;
+                targetHeight = videoHeight;
+              }
+            } else {
+              if (videoHeight > maxDim) {
+                targetHeight = maxDim;
+                targetWidth = Math.round((videoWidth * maxDim) / videoHeight);
+              } else {
+                targetWidth = videoWidth;
+                targetHeight = videoHeight;
+              }
+            }
+          }
+
+          if (canvasRef.current.width !== targetWidth || canvasRef.current.height !== targetHeight) {
+            canvasRef.current.width = targetWidth;
+            canvasRef.current.height = targetHeight;
+          }
+
           const context = canvasRef.current.getContext("2d");
-          context.drawImage(videoRef.current, 0, 0, 640, 480);
+          context.drawImage(videoRef.current, 0, 0, targetWidth, targetHeight);
           const imageData = canvasRef.current.toDataURL("image/jpeg", 0.5);
           latestFrameRef.current = imageData;
           
