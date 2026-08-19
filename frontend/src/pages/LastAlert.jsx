@@ -96,8 +96,10 @@ function LastAlert() {
   };
 
   // Thresholds
-  const EAR_THRESH = 0.21;
-  const MAR_THRESH = 0.6;
+  const earThreshVal = localStorage.getItem("ear_threshold");
+  const marThreshVal = localStorage.getItem("mar_threshold");
+  const EAR_THRESH = earThreshVal !== null ? parseFloat(earThreshVal) : 0.21;
+  const MAR_THRESH = marThreshVal !== null ? parseFloat(marThreshVal) : 0.6;
 
   // Helper for formatting date
   const formatDate = (isoStr) => {

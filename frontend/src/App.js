@@ -5,8 +5,6 @@ import "./App.css";
 
 // Components
 import Header from "./components/Header";
-import VideoFeed from "./components/VideoFeed";
-import Status from "./components/Status";
 import Dashboard from "./components/Dashboard";
 import  Login  from "./pages/Login";
 import History from "./pages/History";
@@ -14,10 +12,9 @@ import Settings from "./pages/Settings";
 import Statistics from "./pages/Statistics";
 import LastAlert from "./pages/LastAlert";
 import Landing from "./pages/Landing";
+import DetectionConsole from "./pages/DetectionConsole";
 
 function App() {
-  const [drowsy, setDrowsy] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("System Ready");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -83,15 +80,7 @@ function App() {
       <main className="main">
         <Routes>
           <Route path="/" element={<ProtectedRoute><Landing /></ProtectedRoute>} />
-          <Route
-            path="/detection"
-            element={
-              <ProtectedRoute>
-                <VideoFeed setDrowsy={setDrowsy} setAlertMsg={setAlertMsg} />
-                <Status drowsy={drowsy} alertMsg={alertMsg} />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/detection" element={<ProtectedRoute><DetectionConsole /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
           <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />

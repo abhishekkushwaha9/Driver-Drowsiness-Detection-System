@@ -5,7 +5,7 @@ import { auth, db } from "../firebase/config";
 import { collection, addDoc, serverTimestamp, doc, setDoc, increment } from "firebase/firestore";
 import { alarmSynth } from "../utils/audioTools";
 
-function VideoFeed({ setDrowsy, setAlertMsg }) {
+function VideoFeed({ setDrowsy, setAlertMsg, setCurrentEar, setCurrentMar }) {
   const [isDetectionActive, setIsDetectionActive] = useState(false);
   const [detectionStatus, setDetectionStatus] = useState("normal");
   const [performanceMetrics, setPerformanceMetrics] = useState({ fps: 0, latency: 0 });
@@ -69,31 +69,38 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
         setAlertMsg("Waiting for Face...");
         drowsyCounter.current = 0;
         setDrowsy(false);
-      } else if (data.drowsy || data.warning) {
-        drowsyCounter.current += 1;
-        // Require 3 consecutive frames (~600ms) to trigger alert
-        if (drowsyCounter.current >= 3) {
-          const type = data.drowsy ? "critical" : "warning";
-          const icon = data.drowsy ? "🚨" : "⚠️";
-          const label = data.drowsy ? "DROWSY" : "WARNING";
-          
-          setDetectionStatus(type);
-          setAlertMsg(`${icon} ${label}! [${data.reasons.join(", ")}]`);
-          setDrowsy(data.drowsy); // Usually triggers the loud alarm
-          handleDetectionEvent(data, type, latestFrameRef.current);
-        }
+        if (setCurrentEar) setCurrentEar(0);
+        if (setCurrentMar) setCurrentMar(0);
       } else {
-        drowsyCounter.current = 0;
-        setDetectionStatus("normal");
-        setAlertMsg("✅ Driver Alert & Focused");
-        setDrowsy(false);
+        if (setCurrentEar && data.ear !== undefined) setCurrentEar(data.ear);
+        if (setCurrentMar && data.mar !== undefined) setCurrentMar(data.mar);
+        
+        if (data.drowsy || data.warning) {
+          drowsyCounter.current += 1;
+          // Require 3 consecutive frames (~600ms) to trigger alert
+          if (drowsyCounter.current >= 3) {
+            const type = data.drowsy ? "critical" : "warning";
+            const icon = data.drowsy ? "🚨" : "⚠️";
+            const label = data.drowsy ? "DROWSY" : "WARNING";
+            
+            setDetectionStatus(type);
+            setAlertMsg(`${icon} ${label}! [${data.reasons.join(", ")}]`);
+            setDrowsy(data.drowsy); // Usually triggers the loud alarm
+            handleDetectionEvent(data, type, latestFrameRef.current);
+          }
+        } else {
+          drowsyCounter.current = 0;
+          setDetectionStatus("normal");
+          setAlertMsg("✅ Driver Alert & Focused");
+          setDrowsy(false);
+        }
       }
     });
 
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
-  }, [setDrowsy, setAlertMsg]);
+  }, [setDrowsy, setAlertMsg, setCurrentEar, setCurrentMar]);
 
   // Handle Drowsy Detection (Alarm + Firestore + local frame save)
   const handleDetectionEvent = async (data, type, frameImage) => {
@@ -199,9 +206,17 @@ function VideoFeed({ setDrowsy, setAlertMsg }) {
           context.drawImage(videoRef.current, 0, 0, 640, 480);
           const imageData = canvasRef.current.toDataURL("image/jpeg", 0.5);
           latestFrameRef.current = imageData;
+          
+          const earThreshVal = localStorage.getItem("ear_threshold");
+          const marThreshVal = localStorage.getItem("mar_threshold");
+          const earThresh = earThreshVal !== null ? parseFloat(earThreshVal) : 0.21;
+          const marThresh = marThreshVal !== null ? parseFloat(marThreshVal) : 0.60;
+          
           socketRef.current.emit("image", {
             image: imageData,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            ear_threshold: earThresh,
+            mar_threshold: marThresh
           });
         }
       }, 200); // 5 FPS

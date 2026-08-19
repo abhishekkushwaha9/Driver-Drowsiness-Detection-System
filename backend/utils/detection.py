@@ -111,7 +111,7 @@ RIGHT_EYE_INDICES = [362, 385, 387, 263, 373, 380]
 # -----------------------------
 # Main detection function
 # -----------------------------
-def detect_drowsiness(frame):
+def detect_drowsiness(frame, ear_thresh=None, mar_thresh=None, **kwargs):
     global state
     
     ih, iw, _ = frame.shape
@@ -130,6 +130,9 @@ def detect_drowsiness(frame):
     yaw = 0
     face_detected = False
 
+    current_ear_thresh = ear_thresh if ear_thresh is not None else EAR_THRESH
+    current_mar_thresh = mar_thresh if mar_thresh is not None else MAR_THRESH
+
     if results.face_landmarks:
         face_detected = True
         landmarks = results.face_landmarks[0]
@@ -146,7 +149,7 @@ def detect_drowsiness(frame):
         pitch, yaw = get_head_pose(landmarks, iw, ih)
         
         # 1. Micro-Sleep & Blinking Logic
-        if ear < EAR_THRESH:
+        if ear < current_ear_thresh:
             state.micro_sleep_frames += 1
             if state.micro_sleep_frames >= MICRO_SLEEP_FRAMES_THRESH:
                 reasons.append("eyes_closed_prolonged")
@@ -158,7 +161,7 @@ def detect_drowsiness(frame):
             state.micro_sleep_frames = 0
             
         # 2. Yawning Logic
-        if mar > MAR_THRESH:
+        if mar > current_mar_thresh:
             reasons.append("yawning")
             warning = True
             
@@ -184,7 +187,7 @@ def detect_drowsiness(frame):
 
     # Log for debugging
     if face_detected:
-        print(f"Face: YES | EAR: {ear:.3f} | MAR: {mar:.3f} | Drowsy: {drowsy} | Warning: {warning}")
+        print(f"Face: YES | EAR: {ear:.3f} (thresh: {current_ear_thresh:.2f}) | MAR: {mar:.3f} (thresh: {current_mar_thresh:.2f}) | Drowsy: {drowsy} | Warning: {warning}")
     else:
         print("Face: NO")
 

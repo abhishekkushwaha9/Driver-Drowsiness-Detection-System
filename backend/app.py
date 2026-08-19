@@ -22,9 +22,23 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 def process_frame(data_obj):
     # Decode base64 image
     try:
+        ear_thresh = None
+        mar_thresh = None
         if isinstance(data_obj, dict):
             image_data = data_obj.get('image')
             timestamp = data_obj.get('timestamp')
+            ear_thresh = data_obj.get('ear_threshold')
+            mar_thresh = data_obj.get('mar_threshold')
+            if ear_thresh is not None:
+                try:
+                    ear_thresh = float(ear_thresh)
+                except (ValueError, TypeError):
+                    ear_thresh = None
+            if mar_thresh is not None:
+                try:
+                    mar_thresh = float(mar_thresh)
+                except (ValueError, TypeError):
+                    mar_thresh = None
         else:
             image_data = data_obj
             timestamp = None
@@ -37,7 +51,7 @@ def process_frame(data_obj):
             return {"error": "Invalid frame", "timestamp": timestamp}
 
         # Drowsiness detection logic
-        data = detect_drowsiness(frame)
+        data = detect_drowsiness(frame, ear_thresh=ear_thresh, mar_thresh=mar_thresh)
         data['timestamp'] = timestamp
         
         return data

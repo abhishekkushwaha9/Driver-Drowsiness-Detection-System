@@ -1,0 +1,350 @@
+/* DetectionConsole.css */
+.console-container {
+  padding: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.console-header {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.console-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+.console-header p {
+  color: #64748b;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* Layout Grid */
+.console-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+.console-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.console-sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Status component styling overrides when inside console wrapper if needed */
+.console-sidebar .status-container {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+/* Calibration Card styling */
+.calibration-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.calibration-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 1.25rem;
+}
+
+.card-header-icon {
+  font-size: 1.6rem;
+  color: #2563eb;
+}
+
+.calibration-card-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+
+.calibration-card-header p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+/* Calibration item groups */
+.calibration-group {
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 1.75rem;
+}
+
+.calibration-group:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0.5rem;
+}
+
+.calibration-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.group-icon {
+  font-size: 1.1rem;
+}
+
+.text-ear {
+  color: #2563eb;
+}
+
+.text-mar {
+  color: #10b981;
+}
+
+.badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-left: auto;
+}
+
+.badge-ear {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+.badge-mar {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+/* Telemetry Gauge styles */
+.telemetry-gauge {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.gauge-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.gauge-status-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  animation: pulse-warn 1.5s infinite alternate;
+}
+
+@keyframes pulse-warn {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+  100% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.4); }
+}
+
+.tag-warn {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
+.gauge-track {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  position: relative;
+  overflow: visible;
+  width: 100%;
+}
+
+.gauge-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+.bg-safe {
+  background: #10b981;
+}
+
+.bg-warn {
+  background: #ef4444;
+}
+
+.gauge-marker {
+  width: 3px;
+  height: 16px;
+  background: #2563eb;
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  z-index: 2;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
+  transition: left 0.2s ease;
+}
+
+/* Slider Controls styling */
+.slider-control {
+  margin-top: 1rem;
+}
+
+.calibration-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.calibration-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #2563eb;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.calibration-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  border-color: #1d4ed8;
+}
+
+.slider-limits {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.calibration-hint {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 10px 0 0 0;
+  line-height: 1.4;
+}
+
+/* Footer reset button */
+.calibration-footer {
+  margin-top: 1.5rem;
+}
+
+.btn-reset {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reset:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.btn-reset svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-reset:hover svg {
+  transform: rotate(-180deg);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1100px) {
+  .console-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .console-main {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .console-sidebar {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .console-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .console-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .console-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .console-header p {
+    font-size: 0.95rem;
+  }
+  
+  .calibration-card {
+    padding: 1.25rem;
+  }
+}
