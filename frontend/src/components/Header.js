@@ -139,6 +139,18 @@ function Header() {
                     <span className="nav-text">Last Alert</span>
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/settings"
+                    className={`nav-item ${
+                      isActivePath("/settings") ? "active" : ""
+                    }`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <FaCog className="nav-icon" />
+                    <span className="nav-text">Settings</span>
+                  </Link>
+                </li>
             {user && (
               <>
                 <li>
@@ -163,18 +175,6 @@ function Header() {
                   >
                     <FaHistory className="nav-icon" />
                     <span className="nav-text">Detection History</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings"
-                    className={`nav-item ${
-                      isActivePath("/settings") ? "active" : ""
-                    }`}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <FaCog className="nav-icon" />
-                    <span className="nav-text">Settings</span>
                   </Link>
                 </li>
               </>

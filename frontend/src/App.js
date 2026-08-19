@@ -79,14 +79,14 @@ function App() {
       <Header />
       <main className="main">
         <Routes>
-          <Route path="/" element={<ProtectedRoute><Landing /></ProtectedRoute>} />
-          <Route path="/detection" element={<ProtectedRoute><DetectionConsole /></ProtectedRoute>} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/detection" element={<DetectionConsole />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
           <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-          <Route path="/last-alert" element={<ProtectedRoute><LastAlert /></ProtectedRoute>} />
+          <Route path="/last-alert" element={<LastAlert />} />
         </Routes>
       </main>
     </Router>
